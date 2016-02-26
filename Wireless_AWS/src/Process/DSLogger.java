@@ -1,4 +1,4 @@
-package process;
+package Process;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
