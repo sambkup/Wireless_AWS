@@ -15,6 +15,8 @@ import utils.Configuration;
 
 public class MessagePasser {
 
+	public final String receive_block = new String();
+
 	Configuration configuration;
 
 	List<Message> receive_queue;
@@ -84,11 +86,6 @@ public class MessagePasser {
 		}
 
 		// send message via TCP:
-		synchronized (connection_to_use) {
-			connection_to_use.seqNum++;
-			message.set_seqNum(connection_to_use.seqNum);
-		}
-		
 		send_tcp(message, connection_to_use);
 
 	}
@@ -118,7 +115,10 @@ public class MessagePasser {
 		synchronized (receive_queue) {
 			receive_queue.add(message);
 		}
-
+		
+		synchronized (receive_block){
+			receive_block.notify();
+		}
 	}
 
 	private void listen_server() {

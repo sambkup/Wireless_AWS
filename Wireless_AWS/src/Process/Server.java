@@ -6,7 +6,6 @@ import utils.Configuration;
 
 public class Server {
 	static String config_file_address;
-	private static boolean debug = true;
 	private static Configuration config;
 	private static MessagePasser messagePasser;
 
@@ -17,34 +16,24 @@ public class Server {
 
 		config_file_address = "resources/config.txt";
 		// config_file_address = "http://www.andrew.cmu.edu/user/skupfer/config.txt";
-		dbg_println("using config_file at: " + config_file_address);
+		System.out.println("Config_file: " + config_file_address);
 
 		// --------------------------------
 		// instantiate the required objects
 
 		config = new Configuration(config_file_address);
-		dbg_println(config.getServerIP());
-		dbg_println(Integer.toString(config.getServerPort()));
+		config.print();
 		
 		messagePasser = new MessagePasser(config, true);
 
 		// --------------------------------
 		// Execute the receiver/sender scripts
-		Message msg = new Message(10,10,10,10);
 
-		messagePasser.send(msg);
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		Message msg2 = messagePasser.receive();
-		msg2.print();
-		
+
+		run_receiver(messagePasser);
 		
 		/*
 		 * TODO: Re-factor and simplify everything:
-		 * -Remove rule checking
 		 * -Simplify config file so it only has the basics: port, IPs, etc.
 		 * -Modify Message, so that it sends a name and GPS coordiantes
 		 * 
@@ -52,11 +41,26 @@ public class Server {
 
 	}
 
-	private static void dbg_println(String string) {
-		if (debug ){
-			System.out.println(string);
-		}
-		
-	}
+	private static void run_receiver(MessagePasser msg_passer) {
+		Thread receiver_thread = new Thread() {
+			public void run() {
+				while (true) {
+					synchronized (messagePasser.receive_block) {
+						try {
+							messagePasser.receive_block.wait();
+						} catch (InterruptedException e) {
+							System.out.println("failed to wait");
+							e.printStackTrace();
+						}
+						Message rcved = msg_passer.receive();
+						if (rcved != null) {
+							rcved.print();
+						}
+					}
+				}
+			}
+		};
 
+		receiver_thread.start();
+	}
 }

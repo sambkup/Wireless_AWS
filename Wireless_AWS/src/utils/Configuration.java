@@ -66,6 +66,10 @@ public class Configuration {
 		this.serverPort = (int) yamlData.get("port");
 	}
 	
+	public void print(){
+		System.out.printf("IP address: %s:%d\n",this.serverIP, this.serverPort);
+	}
+	
 	/* Setters and Getters */
 	
 
