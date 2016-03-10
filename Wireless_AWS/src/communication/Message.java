@@ -4,30 +4,20 @@ import java.io.Serializable;
 
 public class Message implements Serializable {
 	private static final long serialVersionUID = 1L;
-	String dest;
-	String kind;
-	Object data;
-	String src;
+	
+	int lattitude;
+	int longitude;
+	int vector_x;
+	int vector_y;
 
 	int seqNum;
 
-	public Message(String dest, String kind, Object data) {
-		this.dest = dest;
-		this.kind = kind;
-		this.data = data;
+	public Message(int lat, int lon, int vecx, int vecy) {
+		this.lattitude = lat;
+		this.longitude = lon;
+		this.vector_x = vecx;
+		this.vector_y = vecy;
 		this.seqNum = -1;
-	}
-
-	public String getSource() {
-		return src;
-	}
-
-	public String getDest() {
-		return dest;
-	}
-
-	public void set_source(String source) {
-		this.src = source;
 	}
 
 	public void set_seqNum(int sequenceNumber) {
@@ -35,41 +25,17 @@ public class Message implements Serializable {
 		// set the sequence number for this message
 	}
 
-	public String getKind() {
-		return kind;
-	}
-
-	public void setKind(String kind) {
-		this.kind = kind;
-	}
-
-	public Object getData() {
-		return data;
-	}
-
-	public void setData(Object data) {
-		this.data = data;
-	}
-
 	public void print() {
 		System.out.println("------------------------------");
-		System.out.println("Message From: " + this.src);
-		System.out.println("Message To: " + this.dest);
-		System.out.println("Message Kind: " + this.kind);
-		System.out.println("Message Data: " + this.data.toString());
+		System.out.printf("Coordinates: %d,%d\n",this.lattitude, this.longitude);
+		System.out.printf("Path: <%d,%d>\n", this.vector_x, this.vector_y);
 		System.out.println("Message SeqNum: " + this.seqNum);
 		System.out.println("------------------------------");
 	}
 
 	public Message clone() {
-		Message clone = new Message(dest, kind, data);
-		clone.src = src;
-		clone.seqNum = seqNum;
+		Message clone = new Message(this.lattitude, this.longitude, this.vector_x, this.vector_y);
+		clone.seqNum = this.seqNum;
 		return clone;
-	}
-
-	public String toString() {
-		return String.format("Message From: %s, To: %s, Kind: %s, Data: %s, SeqNum: %d", this.src, this.dest, this.kind,
-				this.data.toString(), this.seqNum);
 	}
 }
