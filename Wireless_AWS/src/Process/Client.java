@@ -28,13 +28,25 @@ public class Client {
 
 		// --------------------------------
 		// Execute the receiver/sender scripts
+		
+		
+		double start_lat = 40.442283630;
+		double start_long = -79.947059641;
+		double del_lat = .00004;
+		double del_long = .00005;
 
-		Message msg = new Message("Sammy",54.0678,54.0678,10,10);
+
+		Message msg = new Message("sammy",start_lat,start_long,del_lat,del_long);
+		messagePasser.send(msg);
+		start_lat+=del_lat;
+		start_long+=del_long;
+		msg = new Message("sammy",start_lat,start_long,del_lat,del_long);
+		messagePasser.send(msg);
+		start_lat+=del_lat;
+		start_long+=del_long;
+		msg = new Message("sammy",start_lat,start_long,del_lat,del_long);
 		messagePasser.send(msg);
 		System.out.println("first message sent");
-
-		msg = new Message("Sammy",55.0678,55.0678,15,15);
-		messagePasser.send(msg);
 		System.exit(0);
 
 	}
