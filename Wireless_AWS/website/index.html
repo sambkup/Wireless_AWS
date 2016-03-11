@@ -3,7 +3,7 @@
 <head>
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
   <meta charset="utf-8">
-  <title>Adding a Custom Overlay</title>
+  <title>wireless</title>
   <style>
   html, body {
     height: 100%;
@@ -22,36 +22,44 @@
 
   // Initialize the map and the custom overlay.
 
-  function initMap() {
-    var map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 19,
-      center: {lat: 40.442243, lng: -79.94701758}
-    });
-
+  function placeMarker(lattitude, longitude){
     var marker = new google.maps.Marker({
-      position: {lat: 40.442243, lng: -79.94701758},
+      position: {lat: parseFloat(lattitude), lng: parseFloat(longitude)},
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
         scale: 5
       },
       map: map
     });
+  }
 
+  function placeVector(lattitude, longitude, vec_x, vec_y){
     var lineSymbol = {
       path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
     };
+    var end_latt = parseFloat(lattitude);
+    var end_long = parseFloat(longitude);
+    var vector_x = parseFloat(vec_x);
+    var vector_y = parseFloat(vec_y);
+    var start_latt = end_latt - vector_x;
+    var start_long = end_long - vector_y;
+
 
     var line = new google.maps.Polyline({
-      path: [{lat: 40.442243, lng: -79.94701758}, {lat: 40.442243+.00004, lng: -79.94701758+.00004}],
+      path: [{lat: start_latt, lng: start_long}, {lat: end_latt, lng: end_long}],
       icons: [{
         icon: lineSymbol,
         offset: '100%'
       }],
       map: map
     });
+  }
 
-
-
+  function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 19,
+      center: {lat: 40.442243, lng: -79.94701758}
+    });
   }
   // [END region_initialization]
 
@@ -147,40 +155,43 @@
 
 
   /* test code */
-  function showUser(str) {
-    if (str == "") {
-      document.getElementById("txtHint").innerHTML = "";
-      return;
+  function showUser(name) {
+    //var name = "sammy";
+    if (window.XMLHttpRequest) {
+      // code for IE7+, Firefox, Chrome, Opera, Safari
+      xmlhttp = new XMLHttpRequest();
+    } else {
+      // code for IE6, IE5
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
     }
-    else {
-      if (window.XMLHttpRequest) {
-        // code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp = new XMLHttpRequest();
-      } else {
-        // code for IE6, IE5
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        var response = xmlhttp.responseText;
+        updatemap(response);
       }
-      xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-          document.getElementById("txtHint").innerHTML = xmlhttp.responseText;
-        }
-      };
-      xmlhttp.open("GET","http://52.36.135.251/getstep.php?seqNum="+str+"&name=sammy",true);
-      xmlhttp.send();
+    };
+    xmlhttp.open("GET","http://52.36.135.251/getstep.php?seqNum="+k+"&name="+name,true);
+    xmlhttp.send();
+  }
+
+  function updatemap(response){
+    var arr = JSON.parse(response);
+    var i;
+
+    for(i = 0; i < arr.length; i++) {
+      placeMarker(arr[i].lattitude,arr[i].longitude);
+      placeVector(arr[i].lattitude,arr[i].longitude,arr[i].vector_x,arr[i].vector_y);
+      k++;
     }
   }
 
-
-
-
-
-
-
-
-
-
-//  <div id="map"></div>
-
+var k=0;
+function startup(name,update_rate){
+  setInterval(annoy,update_rate);
+}
+function annoy(){
+  showUser('sammy');
+}
 
 
 
@@ -189,19 +200,14 @@
 </head>
 <body>
 
-  <form>
-    <select name="seqNum" onchange="showUser(this.value)">
-      <option value="">Select a person:</option>
-      <option value="0">0</option>
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-    </select>
-  </form>
-  <br>
-  <div id="txtHint"><b>Person info will be listed here...</b></div>
 
+Name: <input name="Name" id="namebox" type="text" value="sammy"/>
+Update Rate: <input name="UR" id="updateratebox" type="number" value="5000"/>
+<input name="buttonExecute" onclick="startup(document.getElementById('namebox').value,document.getElementById('updateratebox').value)" type="button" value="Execute" />
 
+<br><br>
+
+<div id="map"></div>
 
 </body>
 </html>
