@@ -136,9 +136,66 @@
 
   google.maps.event.addDomListener(window, 'load', initMap);
 
+
+
+
+
+  /* test code */
+  function showUser(str) {
+    if (str == "") {
+      document.getElementById("txtHint").innerHTML = "";
+      return;
+    }
+    else {
+      if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp = new XMLHttpRequest();
+      } else {
+        // code for IE6, IE5
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+      }
+      xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          document.getElementById("txtHint").innerHTML = xmlhttp.responseText;
+        }
+      };
+      xmlhttp.open("GET","getuser.php?seqNum="+str+"&name=sammy",true);
+      xmlhttp.send();
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+//  <div id="map"></div>
+
+
+
+
+
   </script>
 </head>
 <body>
-  <div id="map"></div>
+
+  <form>
+    <select name="seqNum" onchange="showUser(this.value)">
+      <option value="">Select a person:</option>
+      <option value="0">0</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+    </select>
+  </form>
+  <br>
+  <div id="txtHint"><b>Person info will be listed here...</b></div>
+
+
+
 </body>
 </html>

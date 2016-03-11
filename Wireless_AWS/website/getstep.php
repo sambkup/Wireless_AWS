@@ -21,7 +21,7 @@ th {text-align: left;}
   $seqNum = intval($_GET['seqNum']);
   $name = strval($_GET['name']);
 
-  $con = mysqli_connect('localhost','sammy','maggie','wirelessdb');
+  $con = mysqli_connect('localhost','root','maggie','wirelessdb');
   if (!$con) {
     die('Could not connect: ' . mysqli_error($con));
   }
