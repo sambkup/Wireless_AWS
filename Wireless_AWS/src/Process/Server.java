@@ -56,7 +56,7 @@ public class Server {
 
 	}
 
-	private static int counter=0;
+	private static int counter=-1;
 	private static void insertToDB(Message msg){
 		// --------------------------------
 		// testing mysql

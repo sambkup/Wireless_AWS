@@ -46,7 +46,23 @@ public class Client {
 		start_long+=del_long;
 		msg = new Message("sammy",start_lat,start_long,del_lat,del_long);
 		messagePasser.send(msg);
-		System.out.println("first message sent");
+		start_lat+=del_lat;
+		start_long+=del_long;
+		msg = new Message("sammy",start_lat,start_long,del_lat,del_long);
+		messagePasser.send(msg);
+		start_lat+=del_lat;
+		start_long+=del_long;
+		msg = new Message("sammy",start_lat,start_long,del_lat,del_long);
+		messagePasser.send(msg);
+		start_lat+=del_lat;
+		start_long+=del_long;
+		msg = new Message("sammy",start_lat,start_long,del_lat,del_long);
+		messagePasser.send(msg);
+		start_lat+=del_lat;
+		start_long+=del_long;
+		msg = new Message("sammy",start_lat,start_long,del_lat,del_long);
+		messagePasser.send(msg);
+		System.out.println("messages sent");
 		System.exit(0);
 
 	}
