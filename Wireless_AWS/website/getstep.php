@@ -30,6 +30,9 @@ th {text-align: left;}
   $sql="SELECT * FROM steps WHERE name = '".$name."' AND seqNum = $seqNum;";
   $result = mysqli_query($con,$sql);
 
+
+
+
   echo "<table>
   <tr>
   <th>lattitude</th>
@@ -39,6 +42,7 @@ th {text-align: left;}
   <th>name</th>
   <th>seqNum</th>
   </tr>";
+  $outp = "[";
   while($row = mysqli_fetch_array($result)) {
     echo "<tr>";
     echo "<td>" . $row['lattitude'] . "</td>";
@@ -48,8 +52,17 @@ th {text-align: left;}
     echo "<td>" . $row['name'] . "</td>";
     echo "<td>" . $row['seqNum'] . "</td>";
     echo "</tr>";
+      if ($outp != "[") {$outp .= ",";}
+      $outp .= '{"lattitude":"'  . $row["lattitude"] . '",';
+      $outp .= '{"longitude":"'  . $row["longitude"] . '",';
+      $outp .= '{"vector_x":"'  . $row["vector_x"] . '",';
+      $outp .= '"vector_y":"'   . $row["vector_y"]        . '",';
+      $outp .= '"name":"'. $row["name"]     . '"}';
+      $outp .= '"seqNum":"'. $row["seqNum"]     . '"}';
   }
+  $outp .="]";
   echo "</table>";
+  echo "<p>$outp</p>";
   mysqli_close($con);
   ?>
 </body>

@@ -136,7 +136,13 @@
 
   google.maps.event.addDomListener(window, 'load', initMap);
 
-
+// todo:
+/*
+* when I send some coordinates through java, add it to the mysql on server side
+* find get a standard format to get all data from php to http
+* update the map based on points received
+*
+*/
 
 
 
@@ -159,7 +165,7 @@
           document.getElementById("txtHint").innerHTML = xmlhttp.responseText;
         }
       };
-      xmlhttp.open("GET","getuser.php?seqNum="+str+"&name=sammy",true);
+      xmlhttp.open("GET","http://52.36.135.251/getstep.php?seqNum="+str+"&name=sammy",true);
       xmlhttp.send();
     }
   }
