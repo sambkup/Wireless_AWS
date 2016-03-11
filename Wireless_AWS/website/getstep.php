@@ -19,7 +19,7 @@ th {text-align: left;}
 
   <?php
   $seqNum = intval($_GET['seqNum']);
-  $name = intval($_GET['name']);
+  $name = strval($_GET['name']);
 
   $con = mysqli_connect('localhost','sammy','maggie','wirelessdb');
   if (!$con) {
@@ -27,7 +27,7 @@ th {text-align: left;}
   }
 
   mysqli_select_db($con,"ajax_demo");
-  $sql="SELECT * FROM steps WHERE name = '".$q."' AND seqNum = $seqNum ";
+  $sql="SELECT * FROM steps WHERE name = '".$name."' AND seqNum = $seqNum;";
   $result = mysqli_query($con,$sql);
 
   echo "<table>
