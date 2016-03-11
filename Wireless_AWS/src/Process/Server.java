@@ -27,8 +27,8 @@ public class Server {
 		// --------------------------------
 		// initialize - get necessary parameters from input
 
-		config_file_address = "resources/config.txt";
-		//config_file_address = "http://52.36.135.251/config.txt";
+		//config_file_address = "resources/config.txt";
+		config_file_address = "http://52.36.135.251/config.txt";
 		System.out.println("Config_file: " + config_file_address);
 
 		// --------------------------------
