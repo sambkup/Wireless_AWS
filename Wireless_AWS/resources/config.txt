@@ -5,6 +5,6 @@
 # No other nodes are known.
 # These names will be used for src and dest addresses for the Message
 # The local node’s name is included in this list
-#ip   : 52.36.135.251
-ip   : 127.0.0.1
+ip   : 52.36.135.251
+#ip   : 127.0.0.1
 port : 4001

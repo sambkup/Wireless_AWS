@@ -32,7 +32,7 @@ public class Client {
 		
 		double start_lat = 40.442283630;
 		double start_long = -79.947059641;
-		double del_lat = .00004;
+		double del_lat = .00010;
 		double del_long = .00005;
 
 
