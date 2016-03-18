@@ -11,7 +11,7 @@
 
   mysqli_select_db($con,"ajax_demo");
   $sql="SELECT * FROM steps WHERE name = '".$name."' ORDER BY 'seqNum' DESC LIMIT 5;"
-  $sql="SELECT * FROM steps WHERE name = '".$name."' AND seqNum = $seqNum;";
+  #$sql="SELECT * FROM steps WHERE name = '".$name."' AND seqNum = $seqNum;";
   $result = mysqli_query($con,$sql);
 
   $outp = "[";
