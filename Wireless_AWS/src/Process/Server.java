@@ -3,6 +3,7 @@ package Process;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -42,7 +43,8 @@ public class Server {
 		// --------------------------------
 		// Execute the receiver/sender scripts
 
-
+		setCounterFromSeqNum();
+		
 		run_receiver(messagePasser);
 		
 		/*
@@ -57,6 +59,58 @@ public class Server {
 	}
 
 	private static int counter=-1;
+	
+	private static void setCounterFromSeqNum(){
+		// --------------------------------
+		// testing mysql
+		Connection conn = null;
+		Statement stmt = null;
+
+		try{
+			//STEP 2: Register JDBC driver
+			Class.forName("com.mysql.jdbc.Driver");
+
+			//STEP 3: Open a connection
+			System.out.println("Connecting to a selected database...");
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			System.out.println("Connected database successfully...");
+
+			//STEP 4: Execute a query
+			
+			// get max seqNum
+			System.out.println("Getting max seqNum...");
+			stmt = conn.createStatement();
+
+			String sql = "SELECT max(seqNum) AS seqNum FROM steps";
+			ResultSet rslt = stmt.executeQuery(sql);
+	        while (rslt.next()) {
+	            counter = rslt.getInt("seqNum");
+	        }			
+
+		}catch(SQLException se){
+			//Handle errors for JDBC
+			se.printStackTrace();
+		}catch(Exception e){
+			//Handle errors for Class.forName
+			e.printStackTrace();
+		}finally{
+			//finally block used to close resources
+			try{
+				if(stmt!=null)
+					conn.close();
+			}catch(SQLException se){
+			}// do nothing
+			try{
+				if(conn!=null)
+					conn.close();
+			}catch(SQLException se){
+				se.printStackTrace();
+			}//end finally try
+		}//end try
+        System.out.println("Counter set to: "+counter);
+	}
+	
+	
 	private static void insertToDB(Message msg){
 		// --------------------------------
 		// testing mysql
@@ -125,6 +179,7 @@ public class Server {
 	}
 
 	private static void run_receiver(MessagePasser msg_passer) {
+		System.out.println("Starting server");
 		Thread receiver_thread = new Thread() {
 			public void run() {
 				while (true) {
