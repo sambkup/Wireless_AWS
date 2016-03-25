@@ -19,7 +19,6 @@ $sql="INSERT INTO steps VALUES(".$lattitude.",".$longitude.",".$vector_x.",".$ve
 #$sql="SELECT * FROM steps WHERE name = '".$name."' AND seqNum = $seqNum;";
 $result = mysqli_query($con,$sql);
 
-echo ($result);
 if ($result){
   echo("success");
 }
