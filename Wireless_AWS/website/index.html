@@ -21,7 +21,8 @@
   USGSOverlay.prototype = new google.maps.OverlayView();
 
   // Initialize the map and the custom overlay.
-
+  var markers = [];
+  var lines = [];
   function placeMarker(lattitude, longitude){
     var marker = new google.maps.Marker({
       position: {lat: parseFloat(lattitude), lng: parseFloat(longitude)},
@@ -31,7 +32,25 @@
       },
       map: map
     });
+    markers.push(marker);
+
   }
+  function clearMarkers() {
+    setMapOnAll(null);
+  }
+  function deleteMarkers() {
+    clearMarkers();
+    markers = [];
+    lines = [];
+  }
+  function setMapOnAll(map) {
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+      lines[i].setMap(map);
+    }
+  }
+
+
 
   function placeVector(lattitude, longitude, vec_x, vec_y){
     var lineSymbol = {
@@ -53,7 +72,10 @@
       }],
       map: map
     });
+    lines.push(line);
   }
+
+
 
   function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -170,22 +192,20 @@
         updatemap(response);
       }
     };
-    xmlhttp.open("GET","http://52.36.135.251/getstep.php?seqNum="+k+"&name="+name,true);
+    xmlhttp.open("GET","http://52.36.135.251/getstep.php?name="+name,true);
     xmlhttp.send();
   }
 
   function updatemap(response){
     var arr = JSON.parse(response);
     var i;
-
+    deleteMarkers();
     for(i = 0; i < arr.length; i++) {
       placeMarker(arr[i].lattitude,arr[i].longitude);
       placeVector(arr[i].lattitude,arr[i].longitude,arr[i].vector_x,arr[i].vector_y);
-      k++;
     }
   }
 
-var k=0;
 function startup(name,update_rate){
   setInterval(annoy,update_rate);
 }
@@ -194,15 +214,13 @@ function annoy(){
 }
 
 
-
-
   </script>
 </head>
 <body>
 
 
 Name: <input name="Name" id="namebox" type="text" value="sammy"/>
-Update Rate: <input name="UR" id="updateratebox" type="number" value="5000"/>
+Update Rate: <input name="UR" id="updateratebox" type="number" value="1000"/>
 <input name="buttonExecute" onclick="startup(document.getElementById('namebox').value,document.getElementById('updateratebox').value)" type="button" value="Execute" />
 
 <br><br>

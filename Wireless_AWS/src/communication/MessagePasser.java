@@ -11,22 +11,23 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import utils.Configuration;
 
 public class MessagePasser {
 
 	public final String receive_block = new String();
 
-	Configuration configuration;
+	String serverIP;
+	int serverPort;
 
 	List<Message> receive_queue;
 
-	public MessagePasser(Configuration config, boolean iAmServer) {
+	public MessagePasser(String IP, int port, boolean iAmServer) {
 		this.receive_queue = new ArrayList<Message>();
 
-		this.configuration = config;
+		this.serverIP = IP;
+		this.serverPort = port;
 		
-		if (config.getServerIP() == null || config.getServerPort() == 0) {
+		if (this.serverIP == null || this.serverPort == 0) {
 			System.out.println("Unknown IP or Port!");
 			return;
 		}
@@ -44,8 +45,8 @@ public class MessagePasser {
 
 	public Connection open_connection() {
 
-		String ip = this.configuration.getServerIP();
-		int port = this.configuration.getServerPort();
+		String ip = this.serverIP;
+		int port = this.serverPort;
 		
 		if (ip == null || port == 0) {
 			return null;
@@ -122,11 +123,11 @@ public class MessagePasser {
 	}
 
 	private void listen_server() {
-		System.out.println("Starting MessagePasser receive server with address = " + this.configuration.getServerIP());
+		System.out.println("Starting MessagePasser receive server with address = " + this.serverIP);
 		int counter = 0;
 		ServerSocket listenSocket = null;
 		try {
-			listenSocket = new ServerSocket(this.configuration.getServerPort());
+			listenSocket = new ServerSocket(this.serverPort);
 
 			while (true) {
 				Socket clientSocket = listenSocket.accept();

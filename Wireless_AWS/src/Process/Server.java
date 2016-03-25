@@ -9,11 +9,9 @@ import java.sql.Statement;
 
 import communication.Message;
 import communication.MessagePasser;
-import utils.Configuration;
 
 public class Server {
 	static String config_file_address;
-	private static Configuration config;
 	private static MessagePasser messagePasser;
 	
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
@@ -22,23 +20,27 @@ public class Server {
 	static final String USER = "root";
 	static final String PASS = "maggie";
 
+	static String serverIP;
+	static int serverPort;
 
 	public static void main(String[] args) {
 		
 		// --------------------------------
 		// initialize - get necessary parameters from input
 
-		//config_file_address = "resources/config.txt";
-		config_file_address = "http://52.36.135.251/config.txt";
-		System.out.println("Config_file: " + config_file_address);
+		//serverIP = "52.36.135.251";
+		serverIP = "127.0.0.1";
+		serverPort = 4001;
+		System.out.println("Server address: " + config_file_address+":"+serverPort);
+		
 
 		// --------------------------------
 		// instantiate the required objects
-
-		config = new Configuration(config_file_address);
-		config.print();
 		
-		messagePasser = new MessagePasser(config, true);
+
+
+		
+		messagePasser = new MessagePasser(serverIP,serverPort, true);
 
 		// --------------------------------
 		// Execute the receiver/sender scripts
