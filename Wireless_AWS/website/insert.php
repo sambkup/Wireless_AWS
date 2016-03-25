@@ -20,5 +20,11 @@ $sql="INSERT INTO steps VALUES(".$lattitude.",".$longitude.",".$vector_x.",".$ve
 $result = mysqli_query($con,$sql);
 
 echo ($result);
+if ($result){
+  echo("success");
+}
+else{
+  echo("failure");
+}
 mysqli_close($con);
 ?>
