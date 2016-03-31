@@ -17,63 +17,70 @@
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4sXW49tqIRf49kZV-qcCUuBKq9b_9v_Y&signed_in=true"></script>
   <script>
 
+
+  /* TODO:
+  * Make some object abstraction so that we can create a list of previous points for each person
+  * make it so it removes oldest point, when we get a new point - stop points from flashing so much
+  * each user should be a different color (is that possible?)
+  *
+  */
   var overlay;
   USGSOverlay.prototype = new google.maps.OverlayView();
 
   // Initialize the map and the custom overlay.
-  var markers = [];
-  var lines = [];
-  function placeMarker(lattitude, longitude){
-    var marker = new google.maps.Marker({
-      position: {lat: parseFloat(lattitude), lng: parseFloat(longitude)},
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 5
-      },
-      map: map
-    });
-    markers.push(marker);
-
-  }
-  function clearMarkers() {
-    setMapOnAll(null);
-  }
-  function deleteMarkers() {
-    clearMarkers();
-    markers = [];
-    lines = [];
-  }
-  function setMapOnAll(map) {
-    for (var i = 0; i < markers.length; i++) {
-      markers[i].setMap(map);
-      lines[i].setMap(map);
-    }
-  }
-
-
-
-  function placeVector(lattitude, longitude, vec_x, vec_y){
-    var lineSymbol = {
-      path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
-    };
-    var end_latt = parseFloat(lattitude);
-    var end_long = parseFloat(longitude);
-    var vector_x = parseFloat(vec_x);
-    var vector_y = parseFloat(vec_y);
-    var start_latt = end_latt - vector_x;
-    var start_long = end_long - vector_y;
-
-
-    var line = new google.maps.Polyline({
-      path: [{lat: start_latt, lng: start_long}, {lat: end_latt, lng: end_long}],
-      icons: [{
-        icon: lineSymbol,
-        offset: '100%'
-      }],
-      map: map
-    });
-    lines.push(line);
-  }
+  // var markers = [];
+  // var lines = [];
+  // function placeMarker(lattitude, longitude){
+  //   var marker = new google.maps.Marker({
+  //     position: {lat: parseFloat(lattitude), lng: parseFloat(longitude)},
+  //     icon: {
+  //       path: google.maps.SymbolPath.CIRCLE,
+  //       scale: 5
+  //     },
+  //     map: map
+  //   });
+  //   markers.push(marker);
+  //
+  // }
+  // function clearMarkers() {
+  //   setMapOnAll(null);
+  // }
+  // function deleteMarkers() {
+  //   clearMarkers();
+  //   markers = [];
+  //   lines = [];
+  // }
+  // function setMapOnAll(map) {
+  //   for (var i = 0; i < markers.length; i++) {
+  //     markers[i].setMap(map);
+  //     lines[i].setMap(map);
+  //   }
+  // }
+  //
+  //
+  //
+  // function placeVector(lattitude, longitude, vec_x, vec_y){
+  //   var lineSymbol = {
+  //     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+  //   };
+  //   var end_latt = parseFloat(lattitude);
+  //   var end_long = parseFloat(longitude);
+  //   var vector_x = parseFloat(vec_x);
+  //   var vector_y = parseFloat(vec_y);
+  //   var start_latt = end_latt - vector_x;
+  //   var start_long = end_long - vector_y;
+  //
+  //
+  //   var line = new google.maps.Polyline({
+  //     path: [{lat: start_latt, lng: start_long}, {lat: end_latt, lng: end_long}],
+  //     icons: [{
+  //       icon: lineSymbol,
+  //       offset: '100%'
+  //     }],
+  //     map: map
+  //   });
+  //   lines.push(line);
+  // }
 
 
 
@@ -177,41 +184,143 @@
 
 
   /* test code */
-  function showUser(name) {
-    //var name = "sammy";
-    if (window.XMLHttpRequest) {
-      // code for IE7+, Firefox, Chrome, Opera, Safari
-      xmlhttp = new XMLHttpRequest();
-    } else {
-      // code for IE6, IE5
-      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    xmlhttp.onreadystatechange = function() {
-      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        var response = xmlhttp.responseText;
-        updatemap(response);
-      }
-    };
-    xmlhttp.open("GET","http://52.36.135.251/getstep.php?name="+name,true);
-    xmlhttp.send();
-  }
 
-  function updatemap(response){
-    var arr = JSON.parse(response);
-    var i;
-    deleteMarkers();
-    for(i = 0; i < arr.length; i++) {
-      placeMarker(arr[i].lattitude,arr[i].longitude);
-      placeVector(arr[i].lattitude,arr[i].longitude,arr[i].vector_x,arr[i].vector_y);
-    }
-  }
+
+
+
+
 
 function startup(name,update_rate){
-  setInterval(annoy,update_rate);
+  var newUser = new USER(name, update_rate);
+  newUser.run();
 }
-function annoy(){
-  showUser('sammy');
+
+
+var users = [];
+var xmlhttp;
+
+function USER (name,update_rate){
+  this.name = name;
+  this.update_rate = update_rate;
+  this.markers = [];
+  this.lines = [];
+  console.log("creating new user: "+ this.name);
+
+};
+
+
+USER.prototype = {
+  constructor:USER,
+  run: function() {
+    console.log("run called: "+ this.name);
+    this.showUser();
+    //setInterval(showUser,this.update_rate);
+  },
+
+  placeMarker: function(lattitude, longitude) {
+    var marker = new google.maps.Marker({
+      position: {lat: parseFloat(lattitude), lng: parseFloat(longitude)},
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 5
+      },
+      map: map
+    });
+    this.markers.push(marker);
+  },
+
+  clearMarkers: function() {
+    this.setMapOnAll(null);
+  },
+  deleteMarkers: function() {
+    this.clearMarkers();
+    this.markers = [];
+    this.lines = [];
+  },
+  setMapOnAll: function (map) {
+    for (var i = 0; i < this.markers.length; i++) {
+      this.markers[i].setMap(map);
+      this.lines[i].setMap(map);
+    }
+  },
+
+  placeVector: function(lattitude, longitude, vec_x, vec_y){
+    var lineSymbol = {
+      path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+    };
+    var end_latt = parseFloat(lattitude);
+    var end_long = parseFloat(longitude);
+    var vector_x = parseFloat(vec_x);
+    var vector_y = parseFloat(vec_y);
+    var start_latt = end_latt - vector_x;
+    var start_long = end_long - vector_y;
+
+
+    var line = new google.maps.Polyline({
+      path: [{lat: start_latt, lng: start_long}, {lat: end_latt, lng: end_long}],
+      icons: [{
+        icon: lineSymbol,
+        offset: '100%'
+      }],
+      map: map
+    });
+    this.lines.push(line);
+  },
+
+
+  updatemap: function(response){
+    var arr = JSON.parse(response);
+    var i;
+    this.deleteMarkers();
+    for(i = 0; i < arr.length; i++) {
+      this.placeMarker(arr[i].lattitude,arr[i].longitude);
+      this.placeVector(arr[i].lattitude,arr[i].longitude,arr[i].vector_x,arr[i].vector_y);
+    }
+  },
+
+  showUser: function() {
+    var response = "";
+    var blah = getURLInfo(this.name, function() {
+      var resp = this;
+      response = resp;
+      }
+    );
+    this.updatemap(response);
+  }
+
+
+
 }
+
+function getURLInfo(name, callback) {
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET","http://52.36.135.251/getstep.php?name="+name,false);
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      if (typeof callback == "function") {
+        var response = xmlhttp.responseText;
+        callback.apply(response);
+      }
+    }
+  }
+  xmlhttp.send(null);
+}
+
+
+
+function getUserData(name){
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      var response = xmlhttp.responseText;
+      console.log(response);
+      return response;
+    }
+  };
+  xmlhttp.open("GET","http://52.36.135.251/getstep.php?name="+name,false);
+  xmlhttp.send(null);
+}
+
 
 
   </script>
